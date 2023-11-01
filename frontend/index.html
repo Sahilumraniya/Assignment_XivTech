@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Weather App</title>
+  </head>
+  <body>
+    <h1>Weather App</h1>
+    <label for="cityInput">Enter city names (comma-separated):</label>
+    <input type="text" id="cityInput">
+    <button id="getWeatherButton">Get Weather</button>
+    <div id="weatherResults"></div>
+
+    <script>
+      const getWeatherButton = document.getElementById('getWeatherButton');
+      const cityInput = document.getElementById('cityInput');
+      const weatherResults = document.getElementById('weatherResults');
+
+      getWeatherButton.addEventListener('click', async () => {
+        weatherResults.innerHTML = '<h2>Loading...</h2>';
+        const cities = cityInput.value.split(',').map(city => city.trim());
+        console.log(cities);
+        const response = await fetch('http://localhost:5000/getWeather', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ cities }),
+        });
+        const data = await response.json();
+        console.log(data);
+        let weatherHtml = '<h2>Weather Results</h2><ul>';
+        for (const city in data.weather) {
+          weatherHtml += `<li>${city}: ${data.weather[city]}</li>`;
+        }
+        weatherHtml += '</ul>';
+        weatherResults.innerHTML = weatherHtml;
+      });
+    </script>
+  </body>
+</html>
